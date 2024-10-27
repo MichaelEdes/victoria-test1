@@ -1,0 +1,11 @@
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+.home-layout {
+  .home-main-content {
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    background: red;
+    margin: 0 auto;
+  }
+}
