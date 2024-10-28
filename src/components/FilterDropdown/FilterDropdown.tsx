@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./FilterDropdown.scss";
 
 export interface FilterOption {
@@ -10,25 +10,30 @@ export interface FilterOption {
 export interface FilterDropdownProps {
   label: string;
   options: FilterOption[];
+  selectedOptions: Array<string | number | { gte?: number; lte?: number }>;
   onSelect: (selectedOption: FilterOption) => void;
 }
 
 const FilterDropdown: React.FC<FilterDropdownProps> = ({
   label,
   options,
+  selectedOptions,
   onSelect,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showMore, setShowMore] = useState(false);
-  const [selectedOptions, setSelectedOptions] = useState<
-    Set<string | number | { gte?: number; lte?: number }>
-  >(new Set());
+  const [selected, setSelected] = useState<Set<any>>(new Set(selectedOptions));
 
   const toggleDropdown = () => setIsOpen(!isOpen);
   const handleShowMoreToggle = () => setShowMore(!showMore);
 
+  useEffect(() => {
+    // Sync selected state with external selectedOptions prop changes (e.g., on clearAllFilters)
+    setSelected(new Set(selectedOptions));
+  }, [selectedOptions]);
+
   const handleOptionClick = (option: FilterOption) => {
-    const updatedSelections = new Set(selectedOptions);
+    const updatedSelections = new Set(selected);
 
     if (updatedSelections.has(option.value)) {
       updatedSelections.delete(option.value);
@@ -36,7 +41,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       updatedSelections.add(option.value);
     }
 
-    setSelectedOptions(updatedSelections);
+    setSelected(updatedSelections);
     onSelect(option);
   };
 
@@ -59,10 +64,10 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
             >
               <input
                 type="checkbox"
-                checked={selectedOptions.has(option.value)}
+                checked={selected.has(option.value)}
                 readOnly
               />
-              <span>{option.label}</span>
+              <span className="label">{option.label}</span>
               <span className="count">({option.count})</span>
             </div>
           ))}

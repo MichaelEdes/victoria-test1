@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ProductCard from "@components/ProductCard/ProductCard";
 import { Product } from "@utils/types";
 import useFetchProducts from "@hooks/useFetchProducts";
+import FilterDropdown from "@components/FilterDropdown/FilterDropdown";
 import "./ProductListings.scss";
 
 interface FacetOption {
@@ -23,8 +24,11 @@ const ProductListings: React.FC = () => {
   const [pageSize] = useState(30);
 
   const [appliedFacets, setAppliedFacets] = useState<
-    Record<string, Array<{ id: string; value: any; displayValue: string }>>
+    Record<string, Array<{ id: string; value: any }>>
   >({});
+
+  const [minPrice, setMinPrice] = useState<number | "">(""); // State for min price
+  const [maxPrice, setMaxPrice] = useState<number | "">(""); // State for max price
 
   const [defaultFacets, setDefaultFacets] = useState<Facet[]>([]);
 
@@ -61,8 +65,7 @@ const ProductListings: React.FC = () => {
   const toggleFacet = (
     facetIdentifier: string,
     optionId: string,
-    optionValue: any,
-    displayValue: string
+    optionValue: any
   ) => {
     setAppliedFacets((prev) => {
       const facetOptions = prev[facetIdentifier] || [];
@@ -70,7 +73,7 @@ const ProductListings: React.FC = () => {
 
       const updatedFacetOptions = isSelected
         ? facetOptions.filter((opt) => opt.id !== optionId)
-        : [...facetOptions, { id: optionId, value: optionValue, displayValue }];
+        : [...facetOptions, { id: optionId, value: optionValue }];
 
       const newAppliedFacets = {
         ...prev,
@@ -90,90 +93,133 @@ const ProductListings: React.FC = () => {
     setDisplayedProducts([]);
   };
 
-  // Clear all filters
   const clearAllFilters = () => {
     setAppliedFacets({});
+    setMinPrice("");
+    setMaxPrice("");
     setPageNumber(0);
     setDisplayedProducts([]);
   };
 
+  // Apply price range to `appliedFacets`
+  const applyPriceFilter = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (minPrice === "" && maxPrice === "") return;
+
+    const priceRange = {
+      id: "priceRange",
+      value: { gte: minPrice || 0, lte: maxPrice || Infinity },
+    };
+
+    setAppliedFacets((prev) => ({
+      ...prev,
+      prices: [priceRange], // Update applied facets to match the expected structure
+    }));
+
+    setPageNumber(0);
+    setDisplayedProducts([]);
+  };
+
+  const getDisplayName = (facetIdentifier: string) => {
+    const facet = defaultFacets.find((f) => f.identifier === facetIdentifier);
+    return facet ? facet.displayName : facetIdentifier;
+  };
+
   return (
     <div className="product-page-container">
-      <h2>Product Listings</h2>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
       <div className="product-list-container">
         <div className="filter-container">
-          {/* Active Filters Section */}
+          <p className="filter-title">Filter By</p>
           {Object.keys(appliedFacets).length > 0 && (
             <div className="active-filters">
               <h4>Active Filters:</h4>
-              <>
-                <ul>
-                  {Object.entries(appliedFacets).map(
-                    ([facetIdentifier, options]) =>
-                      options.map((option) => (
-                        <li key={option.id}>
-                          <button
-                            onClick={() =>
-                              toggleFacet(
-                                facetIdentifier,
-                                option.id,
-                                option.value,
-                                option.displayValue
-                              )
-                            }
-                          >
-                            <i className="fa-solid fa-circle-xmark"></i>
-                          </button>
-                          <p>
-                            <strong>{facetIdentifier} </strong>
-                            {option.displayValue}
-                          </p>
-                        </li>
-                      ))
-                  )}
-                </ul>
-                <button onClick={clearAllFilters}>Clear All Filters</button>
-              </>
-            </div>
-          )}
-          {/* Filter By Section */}
-          <p>Filter By</p>
-          {defaultFacets.length > 0 ? (
-            defaultFacets.map((facet) => (
-              <div key={facet.identifier} className="facet">
-                <h4>{facet.displayName}</h4>
-                <ul>
-                  {facet.options.map((option: FacetOption) => (
-                    <li key={option.identifier}>
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={
-                            appliedFacets[facet.identifier]?.some(
-                              (opt) => opt.id === option.identifier
-                            ) || false
-                          }
-                          onChange={() =>
+              <ul>
+                {Object.entries(appliedFacets).map(
+                  ([facetIdentifier, options]) =>
+                    options.map((option) => (
+                      <li key={option.id}>
+                        <button
+                          onClick={() =>
                             toggleFacet(
-                              facet.identifier,
-                              option.identifier,
-                              option.value,
-                              option.displayValue
+                              facetIdentifier,
+                              option.id,
+                              option.value
                             )
                           }
-                        />
-                        {option.displayValue} ({option.productCount})
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))
-          ) : (
-            <p>No filters available</p>
+                        >
+                          <i className="fa-solid fa-circle-xmark"></i>
+                        </button>
+                        <p>
+                          <strong>{getDisplayName(facetIdentifier)}: </strong>
+                          {option.value.gte !== undefined &&
+                          option.value.lte !== undefined
+                            ? `${option.value.gte} - ${option.value.lte}`
+                            : option.value}
+                        </p>
+                      </li>
+                    ))
+                )}
+              </ul>
+              <button className="clear" onClick={clearAllFilters}>
+                Clear All Filters
+              </button>
+            </div>
           )}
+          <div className="filters">
+            <form className="custom-price" onSubmit={applyPriceFilter}>
+              <input
+                type="number"
+                placeholder="Min"
+                value={minPrice}
+                onChange={(e) =>
+                  setMinPrice(e.target.value ? parseInt(e.target.value) : "")
+                }
+              />
+              <input
+                type="number"
+                placeholder="Max"
+                value={maxPrice}
+                onChange={(e) =>
+                  setMaxPrice(e.target.value ? parseInt(e.target.value) : "")
+                }
+              />
+              <button
+                disabled={minPrice === "" && maxPrice === ""}
+                type="submit"
+              >
+                Go
+              </button>
+            </form>
+            {defaultFacets.length > 0 ? (
+              defaultFacets.map((facet) => (
+                <FilterDropdown
+                  key={facet.identifier}
+                  label={facet.displayName}
+                  options={facet.options.map((option) => ({
+                    label: option.displayValue,
+                    value: option.value,
+                    count: option.productCount,
+                  }))}
+                  selectedOptions={
+                    appliedFacets[facet.identifier]?.map((opt) => opt.value) ||
+                    []
+                  }
+                  onSelect={(selectedOption) =>
+                    toggleFacet(
+                      facet.identifier,
+                      selectedOption.label,
+                      selectedOption.value
+                    )
+                  }
+                />
+              ))
+            ) : (
+              <p>No filters available</p>
+            )}
+          </div>
         </div>
         <div>
           <div className="data">

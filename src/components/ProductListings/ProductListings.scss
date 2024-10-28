@@ -1,6 +1,6 @@
 .product-page-container {
   max-width: 1200px;
-  padding: 0 1rem 10rem 1rem;
+  padding: 3rem 1rem 10rem 1rem;
   margin: 0 auto;
 
   .product-list-container {
@@ -16,10 +16,56 @@
     }
 
     .filter-container {
+      position: sticky;
+      top: 0;
+
       .filters {
         display: flex;
         flex-direction: column;
         gap: 10px;
+      }
+
+      .filter-title {
+        font-size: 1.8rem;
+        margin: 0;
+        margin-bottom: 1rem;
+        font-weight: bold;
+      }
+    }
+
+    .custom-price {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      border-color: black;
+      border-top: 1px solid rgb(225, 225, 225);
+      border-bottom: 1px solid rgb(225, 225, 225);
+      padding: 15px 0;
+
+      input {
+        border: 0;
+        font-size: 1rem;
+        width: 50%;
+        padding: 10px;
+        border: solid 1px rgb(225, 225, 225);
+        border-radius: 0.25rem;
+        border-radius: 0 0 0.25rem 0.25rem;
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 28px 0px,
+          rgba(0, 0, 0, 0.1) 0px 2px 4px 0px,
+          rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
+      }
+
+      button {
+        border: 0px;
+        padding: 10px;
+        color: white;
+        border-radius: 0.25rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        background-color: green;
+        &:disabled {
+          background-color: gray;
+        }
       }
     }
 
@@ -31,6 +77,13 @@
       gap: 20px;
       background-color: white;
       padding: 15px;
+
+      .clear {
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
 
       h4 {
         margin: 0;
@@ -52,11 +105,19 @@
           p {
             width: 100%;
             margin: 0;
-            text-transform: capitalize;
+
+            strong {
+              text-transform: capitalize;
+            }
           }
           i {
-            color: green;
+            color: rgb(5, 177, 5);
             font-size: 1.5rem;
+            cursor: pointer;
+
+            &:hover {
+              color: rgb(3, 105, 3);
+            }
           }
         }
       }
@@ -65,7 +126,6 @@
         width: 100%;
         border: 0;
         background-color: white;
-        text-decoration: underline;
       }
     }
 

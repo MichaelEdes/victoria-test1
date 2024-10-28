@@ -12,6 +12,10 @@
     cursor: pointer;
     border: solid 1px rgb(220, 220, 220);
     border-radius: 0.25rem;
+
+    &:hover {
+      background-color: rgb(237, 237, 237);
+    }
   }
 
   .options {
@@ -28,7 +32,12 @@
       align-items: center;
       gap: 15px;
 
-      // Checkbox Styling
+      &:hover {
+        .label {
+          text-decoration: underline;
+        }
+      }
+
       input[type="checkbox"] {
         appearance: none;
         width: 16px;
@@ -62,5 +71,10 @@
     padding: 10px;
     border: 0;
     border-radius: 0 0 0.25rem 0.25rem;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgb(237, 237, 237);
+    }
   }
 }
