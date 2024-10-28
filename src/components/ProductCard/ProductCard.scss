@@ -1,0 +1,155 @@
+.product-card {
+  display: flex;
+  flex-direction: column;
+  transition: ease-in-out 0.3s;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+  border-radius: 0.45rem;
+  overflow: hidden;
+
+  &:hover {
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
+      rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+    transition: ease-in-out 0.3s;
+  }
+
+  .content {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .product-image {
+    position: relative;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .best-seller {
+      position: absolute;
+      background-color: rgba(0, 129, 185, 0.8);
+      bottom: 0;
+      width: 100%;
+      margin: 0;
+      padding: 5px;
+      text-align: center;
+      font-weight: 700;
+      color: white;
+    }
+
+    .space-saver {
+      position: absolute;
+      font-size: 0.95rem;
+      font-family: "Filson Soft", sans-serif;
+      font-weight: 500;
+      line-height: 1;
+      color: rgb(253, 253, 253);
+      text-transform: uppercase;
+      position: absolute;
+      text-align: center;
+      background: rgb(111, 111, 111);
+      padding: 0.325rem;
+      top: 0.25rem;
+      right: 1rem;
+      border-radius: 3px;
+      max-width: 80px;
+    }
+
+    .sale {
+      font-size: 0.95rem;
+      font-family: "Filson Soft", sans-serif;
+      font-weight: 500;
+      line-height: 1;
+      color: rgb(253, 253, 253);
+      text-transform: uppercase;
+      position: absolute;
+      text-align: center;
+      background: rgb(207, 0, 16);
+      padding: 0.325rem;
+      top: 0.25rem;
+      left: 1rem;
+      border-radius: 3px;
+      max-width: 43%;
+    }
+  }
+
+  .product-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      max-width: 60px;
+      margin-bottom: 5px;
+    }
+    i {
+      display: flex;
+      font-size: 1.6rem;
+      align-items: center;
+      justify-content: center;
+    }
+    .name {
+      font-size: medium;
+      font-weight: 500;
+      color: rgb(55, 55, 55);
+      margin: 0;
+    }
+  }
+
+  .price {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+
+    .now {
+      font-size: x-large;
+      font-weight: 900;
+      color: red;
+      margin: 0;
+    }
+
+    .was {
+      text-decoration: line-through;
+      color: rgb(105, 105, 105);
+      margin: 0;
+    }
+  }
+
+  .finance {
+    margin: 0;
+    color: rgb(0, 129, 185);
+    font-weight: 500;
+  }
+
+  .stock {
+    .in {
+      margin: 0;
+
+      i {
+        color: rgb(8, 186, 8);
+      }
+    }
+
+    .out {
+      margin: 0;
+
+      i {
+        color: orangered;
+      }
+    }
+  }
+
+  .reviews {
+    i {
+      color: gold;
+    }
+  }
+}
