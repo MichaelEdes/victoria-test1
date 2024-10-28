@@ -21,14 +21,14 @@ interface Facet {
 const ProductListings: React.FC = () => {
   const [sort, setSort] = useState(1);
   const [pageNumber, setPageNumber] = useState(0);
-  const [pageSize] = useState(30);
+  const [pageSize, setPageSize] = useState(30);
 
   const [appliedFacets, setAppliedFacets] = useState<
     Record<string, Array<{ id: string; value: any }>>
   >({});
 
-  const [minPrice, setMinPrice] = useState<number | "">(""); // State for min price
-  const [maxPrice, setMaxPrice] = useState<number | "">(""); // State for max price
+  const [minPrice, setMinPrice] = useState<number | "">("");
+  const [maxPrice, setMaxPrice] = useState<number | "">("");
 
   const [defaultFacets, setDefaultFacets] = useState<Facet[]>([]);
 
@@ -43,7 +43,7 @@ const ProductListings: React.FC = () => {
   const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    setDisplayedProducts(products);
+    setDisplayedProducts((prevProducts) => [...prevProducts, ...products]);
   }, [products]);
 
   useEffect(() => {
@@ -101,7 +101,6 @@ const ProductListings: React.FC = () => {
     setDisplayedProducts([]);
   };
 
-  // Apply price range to `appliedFacets`
   const applyPriceFilter = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -114,7 +113,7 @@ const ProductListings: React.FC = () => {
 
     setAppliedFacets((prev) => ({
       ...prev,
-      prices: [priceRange], // Update applied facets to match the expected structure
+      prices: [priceRange],
     }));
 
     setPageNumber(0);
