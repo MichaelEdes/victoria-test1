@@ -1,68 +1,53 @@
 // ProductListings.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ProductCard from "@components/ProductCard/ProductCard";
-import "./ProductListings.scss";
 import { Product } from "@utils/types";
+import useFetchProducts from "@hooks/useFetchProducts";
+import "./ProductListings.scss";
 
 const ProductListings: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchProducts = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(
-        "https://spanishinquisition.victorianplumbing.co.uk/interviews/listings?apikey=yj2bV48J40KsBpIMLvrZZ1j1KwxN4u3A83H8IBvI",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            query: "toilets",
-            pageNumber: 0,
-            size: 100,
-            additionalPages: 0,
-            sort: 1,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch products");
-      }
-
-      const data = await response.json();
-      setProducts(data.products || []);
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("An unexpected error occurred");
-      }
-    } finally {
-      setLoading(false);
-    }
+  const [sort, setSort] = useState(1); // Initialize sort with "recommended" option
+  const { products, loading, error, totalResults } = useFetchProducts(
+    "toilets",
+    0,
+    100,
+    sort
+  );
+  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSort(Number(event.target.value));
   };
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
   return (
-    <div className="product-list-container">
+    <div className="product-page-container">
       <h2>Product Listings</h2>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
-      <div className="product-list">
-        {products.length > 0
-          ? products.map((product, index) => (
-              <ProductCard key={index} product={product} />
-            ))
-          : !loading && <p>No products found.</p>}
+      <div className="product-list-container">
+        <div className="filter-container">
+          <p>Filter By</p>
+          <div className="filters"></div>
+        </div>
+        <div>
+          <div className="data">
+            <div className="sort">
+              <p>Sort By</p>
+              <select value={sort} onChange={handleSortChange}>
+                <option value={1}>Recommended</option>
+                <option value={2}>Lowest Price</option>
+                <option value={3}>Highest Price</option>
+                <option value={4}>Highest Discount</option>
+              </select>
+            </div>
+            <p>{totalResults} results</p>
+          </div>
+          <div className="product-list">
+            {products.length > 0
+              ? products.map((product, index) => (
+                  <ProductCard key={index} product={product} />
+                ))
+              : !loading && <p>No products found.</p>}
+          </div>
+        </div>
       </div>
     </div>
   );

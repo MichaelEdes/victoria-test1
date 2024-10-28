@@ -6,6 +6,7 @@ export interface Price {
   priceExcTax: number;
   isOnPromotion: boolean;
   monthlyFinanceEstimate: number;
+  discountPercentage: number;
 }
 
 export interface Image {
@@ -16,6 +17,7 @@ export interface Image {
 export interface StockStatus {
   status: string;
   eta: string;
+  stockLevel: string;
 }
 
 export interface Brand {

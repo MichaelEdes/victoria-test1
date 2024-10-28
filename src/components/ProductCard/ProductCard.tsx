@@ -1,6 +1,6 @@
 // ProductCard.tsx
 import React from "react";
-import { Product } from "@utils/types"; // Adjust path as needed
+import { Product } from "@utils/types";
 import "./ProductCard.scss";
 
 interface ProductCardProps {
@@ -18,11 +18,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   function formatDate(dateString: string): string {
     const date = new Date(dateString);
 
+    if (isNaN(date.getTime())) {
+      return "Invalid Date";
+    }
+
     const day = date.getDate();
     const month = date.toLocaleString("default", { month: "long" });
     const year = date.getFullYear();
 
-    // Format the day with suffix (e.g., 1st, 2nd, 3rd, etc.)
     const daySuffix = (day: number) => {
       if (day > 3 && day < 21) return "th";
       switch (day % 10) {
@@ -50,7 +53,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {product.attributes.isShortProjection && (
           <p className="space-saver">Space Saver</p>
         )}
-        {product.price.isOnPromotion && <p className="sale">Sale</p>}
+        {product.price.isOnPromotion ? (
+          product.price.discountPercentage ? (
+            <p className="sale">Save {product.price.discountPercentage}%</p>
+          ) : (
+            <p className="sale">Sale</p>
+          )
+        ) : null}
       </div>
 
       <div className="content">
@@ -87,6 +96,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <p className="in">
               <i className="fa-solid fa-circle-check"></i> In Stock
             </p>
+          ) : product.stockStatus.status === "A" ? (
+            <p className="low">
+              <i className="fa-solid fa-exclamation-circle"></i> Low Stock
+            </p>
+          ) : product.stockStatus.status === "D" ? (
+            <p className="in">
+              <i className="fa-solid fa-circle-check"></i>{" "}
+              {product.stockStatus.stockLevel} left in stock
+            </p>
           ) : (
             <p className="out">
               <i className="fa-solid fa-calendar-xmark"></i> due{" "}
@@ -94,6 +112,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </p>
           )}
         </div>
+
         {product.reviewsCount > 0 && (
           <div className="reviews">
             {product.averageRating} <i className="fa-solid fa-star"></i>{" "}
