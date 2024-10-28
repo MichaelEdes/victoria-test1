@@ -82,15 +82,23 @@ export interface Product {
   averageRating: number;
 }
 
-export type FilterValue = string | number | { gte?: number; lte?: number };
+export interface FacetOption {
+  identifier: string;
+  displayValue: string;
+  productCount: number;
+  value: any;
+}
 
-export interface FilterOption {
-  [x: string]: any;
+export interface Facet {
   identifier: string;
   displayName: string;
-  options: {
-    displayValue: string;
-    value: FilterValue;
-    productCount: number;
-  }[];
+  options: FacetOption[];
+}
+
+export interface UseFetchProductsResult {
+  products: Product[];
+  loading: boolean;
+  error: string | null;
+  totalResults: number;
+  facets: Facet[];
 }

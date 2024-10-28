@@ -30,7 +30,6 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   const handleOptionClick = (option: FilterOption) => {
     const updatedSelections = new Set(selectedOptions);
 
-    // Toggle selection state
     if (updatedSelections.has(option.value)) {
       updatedSelections.delete(option.value);
     } else {

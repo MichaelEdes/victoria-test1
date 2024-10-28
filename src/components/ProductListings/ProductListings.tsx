@@ -1,32 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProductCard from "@components/ProductCard/ProductCard";
-import { Product, FilterOption, FilterValue } from "@utils/types";
+import { Product } from "@utils/types";
 import useFetchProducts from "@hooks/useFetchProducts";
 import "./ProductListings.scss";
-import FilterDropdown from "@components/FilterDropdown/FilterDropdown";
 
-interface SelectedFilters {
-  [key: string]: FilterValue;
+interface FacetOption {
+  identifier: string;
+  displayValue: string;
+  productCount: number;
+  value: any;
+}
+
+interface Facet {
+  identifier: string;
+  displayName: string;
+  options: FacetOption[];
 }
 
 const ProductListings: React.FC = () => {
   const [sort, setSort] = useState(1);
-  const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({});
   const [pageNumber, setPageNumber] = useState(0);
   const [pageSize] = useState(30);
-  const { products, loading, error, totalResults, filters } = useFetchProducts(
+
+  const [appliedFacets, setAppliedFacets] = useState<
+    Record<string, Array<{ id: string; value: any; displayValue: string }>>
+  >({});
+
+  const [defaultFacets, setDefaultFacets] = useState<Facet[]>([]);
+
+  const { products, loading, error, totalResults, facets } = useFetchProducts(
     "toilets",
     pageNumber,
     pageSize,
     sort,
-    selectedFilters
+    appliedFacets
   );
 
   const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
 
-  React.useEffect(() => {
-    setDisplayedProducts((prevProducts) => [...prevProducts, ...products]);
+  useEffect(() => {
+    setDisplayedProducts(products);
   }, [products]);
+
+  useEffect(() => {
+    if (facets.length > 0 && defaultFacets.length === 0) {
+      setDefaultFacets(facets);
+    }
+  }, [facets, defaultFacets]);
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSort(Number(event.target.value));
@@ -34,94 +54,126 @@ const ProductListings: React.FC = () => {
     setDisplayedProducts([]);
   };
 
-  const handleFilterSelect = (filterId: string, optionValue: FilterValue) => {
-    setSelectedFilters((prevFilters) => ({
-      ...prevFilters,
-      [filterId]: optionValue,
-    }));
-    setPageNumber(0);
-    setDisplayedProducts([]);
-  };
-
-  const handleClearFilters = () => {
-    setSelectedFilters({});
-    setPageNumber(0);
-    setDisplayedProducts([]);
-  };
-
-  const handleRemoveFilter = (filterId: string) => {
-    setSelectedFilters((prevFilters) => {
-      const newFilters = { ...prevFilters };
-      delete newFilters[filterId];
-      return newFilters;
-    });
-    setPageNumber(0);
-    setDisplayedProducts([]);
-  };
-
-  const getFilterLabel = (filterId: string) => {
-    const filter = filters.find((f) => f.identifier === filterId);
-    return filter ? filter.displayName : filterId;
-  };
-
-  const formatFilterValue = (value: FilterValue) => {
-    if (typeof value === "object" && "gte" in value && "lte" in value) {
-      return `${value.gte} - ${value.lte}`;
-    }
-    return String(value);
-  };
-
   const handleViewMore = () => {
     setPageNumber((prevPage) => prevPage + 1);
   };
 
+  const toggleFacet = (
+    facetIdentifier: string,
+    optionId: string,
+    optionValue: any,
+    displayValue: string
+  ) => {
+    setAppliedFacets((prev) => {
+      const facetOptions = prev[facetIdentifier] || [];
+      const isSelected = facetOptions.some((opt) => opt.id === optionId);
+
+      const updatedFacetOptions = isSelected
+        ? facetOptions.filter((opt) => opt.id !== optionId)
+        : [...facetOptions, { id: optionId, value: optionValue, displayValue }];
+
+      const newAppliedFacets = {
+        ...prev,
+        [facetIdentifier]: updatedFacetOptions,
+      };
+
+      Object.keys(newAppliedFacets).forEach((key) => {
+        if (newAppliedFacets[key].length === 0) {
+          delete newAppliedFacets[key];
+        }
+      });
+
+      return newAppliedFacets;
+    });
+
+    setPageNumber(0);
+    setDisplayedProducts([]);
+  };
+
+  // Clear all filters
+  const clearAllFilters = () => {
+    setAppliedFacets({});
+    setPageNumber(0);
+    setDisplayedProducts([]);
+  };
+
   return (
     <div className="product-page-container">
-      <h2></h2>
+      <h2>Product Listings</h2>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
       <div className="product-list-container">
         <div className="filter-container">
-          <p>Filter By</p>
-          {Object.keys(selectedFilters).length > 0 && (
+          {/* Active Filters Section */}
+          {Object.keys(appliedFacets).length > 0 && (
             <div className="active-filters">
-              <h4>Selected Filters:</h4>
-              <ul>
-                {Object.entries(selectedFilters).map(([key, value]) => (
-                  <li key={key}>
-                    <i
-                      className="fa-solid fa-circle-xmark"
-                      onClick={() => handleRemoveFilter(key)}
-                    ></i>
-                    <strong>{getFilterLabel(key)}</strong>{" "}
-                    {formatFilterValue(value)}
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={handleClearFilters}
-                className="clear-filters-button"
-              >
-                Clear All
-              </button>
+              <h4>Active Filters:</h4>
+              <>
+                <ul>
+                  {Object.entries(appliedFacets).map(
+                    ([facetIdentifier, options]) =>
+                      options.map((option) => (
+                        <li key={option.id}>
+                          <button
+                            onClick={() =>
+                              toggleFacet(
+                                facetIdentifier,
+                                option.id,
+                                option.value,
+                                option.displayValue
+                              )
+                            }
+                          >
+                            <i className="fa-solid fa-circle-xmark"></i>
+                          </button>
+                          <p>
+                            <strong>{facetIdentifier} </strong>
+                            {option.displayValue}
+                          </p>
+                        </li>
+                      ))
+                  )}
+                </ul>
+                <button onClick={clearAllFilters}>Clear All Filters</button>
+              </>
             </div>
           )}
-          <div className="filters">
-            {filters.map((filter: FilterOption) => (
-              <FilterDropdown
-                key={filter.identifier}
-                label={filter.displayName}
-                options={filter.options.map((option) => ({
-                  label: option.displayValue,
-                  value: option.value,
-                  count: option.productCount,
-                }))}
-                onSelect={(selectedOption) =>
-                  handleFilterSelect(filter.identifier, selectedOption.value)
-                }
-              />
-            ))}
-          </div>
+          {/* Filter By Section */}
+          <p>Filter By</p>
+          {defaultFacets.length > 0 ? (
+            defaultFacets.map((facet) => (
+              <div key={facet.identifier} className="facet">
+                <h4>{facet.displayName}</h4>
+                <ul>
+                  {facet.options.map((option: FacetOption) => (
+                    <li key={option.identifier}>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={
+                            appliedFacets[facet.identifier]?.some(
+                              (opt) => opt.id === option.identifier
+                            ) || false
+                          }
+                          onChange={() =>
+                            toggleFacet(
+                              facet.identifier,
+                              option.identifier,
+                              option.value,
+                              option.displayValue
+                            )
+                          }
+                        />
+                        {option.displayValue} ({option.productCount})
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          ) : (
+            <p>No filters available</p>
+          )}
         </div>
         <div>
           <div className="data">

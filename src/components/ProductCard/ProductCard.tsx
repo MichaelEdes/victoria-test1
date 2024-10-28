@@ -46,7 +46,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <div className="product-card">
       <div className="product-image">
-        <img src={product.image.url} alt={product.image.imageAltText} />
+        <img
+          loading="lazy"
+          src={product.image.url}
+          alt={product.image.imageAltText}
+        />
         {product.attributes.isBestSeller && (
           <p className="best-seller">Best Seller</p>
         )}
