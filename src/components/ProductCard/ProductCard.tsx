@@ -94,7 +94,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="stock">
           {product.stockStatus.status === "G" ? (
             <p className="in">
-              <i className="fa-solid fa-circle-check"></i> In Stock
+              <i className="fa-solid fa-square-check"></i> In Stock
+            </p>
+          ) : product.stockStatus.status === "V" ? (
+            <p className="in">
+              <i className="fa-solid fa-square-check"></i> In Stock
             </p>
           ) : product.stockStatus.status === "A" ? (
             <p className="low">
@@ -102,8 +106,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </p>
           ) : product.stockStatus.status === "D" ? (
             <p className="in">
-              <i className="fa-solid fa-circle-check"></i>{" "}
+              <i className="fa-solid fa-square-check"></i>{" "}
               {product.stockStatus.stockLevel} left in stock
+            </p>
+          ) : product.stockStatus.status === "R" ? (
+            <p className="low">
+              <i className="fa-solid fa-square-check"></i>{" "}
+              {product.stockStatus.stockLevel} Available
             </p>
           ) : (
             <p className="out">

@@ -81,3 +81,15 @@ export interface Product {
   reviewsCount: number;
   averageRating: number;
 }
+
+export type FilterValue = string | number | { gte?: number; lte?: number };
+
+export interface FilterOption {
+  identifier: string;
+  displayName: string;
+  options: {
+    displayValue: string;
+    value: FilterValue;
+    productCount: number;
+  }[];
+}

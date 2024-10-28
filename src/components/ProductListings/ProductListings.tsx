@@ -1,20 +1,35 @@
 // ProductListings.tsx
 import React, { useState } from "react";
 import ProductCard from "@components/ProductCard/ProductCard";
-import { Product } from "@utils/types";
+import { Product, FilterOption, FilterValue } from "@utils/types";
 import useFetchProducts from "@hooks/useFetchProducts";
 import "./ProductListings.scss";
+import FilterDropdown from "@components/FilterDropdown/FilterDropdown";
+
+interface SelectedFilters {
+  [key: string]: FilterValue;
+}
 
 const ProductListings: React.FC = () => {
-  const [sort, setSort] = useState(1); // Initialize sort with "recommended" option
-  const { products, loading, error, totalResults } = useFetchProducts(
+  const [sort, setSort] = useState(1);
+  const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({});
+  const { products, loading, error, totalResults, filters } = useFetchProducts(
     "toilets",
     0,
     100,
-    sort
+    sort,
+    selectedFilters
   );
+
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSort(Number(event.target.value));
+  };
+
+  const handleFilterSelect = (filterId: string, optionValue: FilterValue) => {
+    setSelectedFilters((prevFilters) => ({
+      ...prevFilters,
+      [filterId]: optionValue,
+    }));
   };
 
   return (
@@ -25,7 +40,22 @@ const ProductListings: React.FC = () => {
       <div className="product-list-container">
         <div className="filter-container">
           <p>Filter By</p>
-          <div className="filters"></div>
+          <div className="filters">
+            {filters.map((filter: FilterOption) => (
+              <FilterDropdown
+                key={filter.identifier}
+                label={filter.displayName}
+                options={filter.options.map((option) => ({
+                  label: option.displayValue,
+                  value: option.value,
+                  count: option.productCount,
+                }))}
+                onSelect={(selectedOption) =>
+                  handleFilterSelect(filter.identifier, selectedOption.value)
+                }
+              />
+            ))}
+          </div>
         </div>
         <div>
           <div className="data">
@@ -42,7 +72,7 @@ const ProductListings: React.FC = () => {
           </div>
           <div className="product-list">
             {products.length > 0
-              ? products.map((product, index) => (
+              ? products.map((product: Product, index: number) => (
                   <ProductCard key={index} product={product} />
                 ))
               : !loading && <p>No products found.</p>}
