@@ -2,7 +2,6 @@
   background-color: white;
   overflow: hidden;
   border-radius: 0.25rem;
-  overflow: hidden;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
 
   .filter-trigger {
@@ -13,7 +12,6 @@
     cursor: pointer;
     border: solid 1px rgb(220, 220, 220);
     border-radius: 0.25rem;
-    overflow: hidden;
   }
 
   .options {
@@ -21,10 +19,41 @@
     box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 28px 0px,
       rgba(0, 0, 0, 0.1) 0px 2px 4px 0px,
       rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
+
     .option {
       padding: 10px;
       cursor: pointer;
       font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+
+      // Checkbox Styling
+      input[type="checkbox"] {
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #28a745;
+        border-radius: 4px;
+        position: relative;
+        cursor: pointer;
+        outline: none;
+        transition: background-color 0.3s;
+
+        &:checked {
+          background-color: #28a745;
+        }
+
+        &:checked::after {
+          content: "✓";
+          color: white;
+          font-size: 12px;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+      }
     }
   }
 

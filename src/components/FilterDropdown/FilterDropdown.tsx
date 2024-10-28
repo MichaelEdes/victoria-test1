@@ -20,9 +20,26 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showMore, setShowMore] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState<
+    Set<string | number | { gte?: number; lte?: number }>
+  >(new Set());
 
   const toggleDropdown = () => setIsOpen(!isOpen);
   const handleShowMoreToggle = () => setShowMore(!showMore);
+
+  const handleOptionClick = (option: FilterOption) => {
+    const updatedSelections = new Set(selectedOptions);
+
+    // Toggle selection state
+    if (updatedSelections.has(option.value)) {
+      updatedSelections.delete(option.value);
+    } else {
+      updatedSelections.add(option.value);
+    }
+
+    setSelectedOptions(updatedSelections);
+    onSelect(option);
+  };
 
   return (
     <div className="filter-dropdown">
@@ -39,10 +56,13 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
             <div
               key={index}
               className="option"
-              onClick={() => {
-                if (onSelect) onSelect(option);
-              }}
+              onClick={() => handleOptionClick(option)}
             >
+              <input
+                type="checkbox"
+                checked={selectedOptions.has(option.value)}
+                readOnly
+              />
               <span>{option.label}</span>
               <span className="count">({option.count})</span>
             </div>
