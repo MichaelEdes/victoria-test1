@@ -172,7 +172,9 @@ const ProductListings: React.FC = () => {
             <form className="custom-price" onSubmit={applyPriceFilter}>
               <input
                 type="number"
-                placeholder="Min"
+                placeholder="£Min"
+                step={100}
+                min={0}
                 value={minPrice}
                 onChange={(e) =>
                   setMinPrice(e.target.value ? parseInt(e.target.value) : "")
@@ -180,7 +182,9 @@ const ProductListings: React.FC = () => {
               />
               <input
                 type="number"
-                placeholder="Max"
+                min={0}
+                step={100}
+                placeholder="£Max"
                 value={maxPrice}
                 onChange={(e) =>
                   setMaxPrice(e.target.value ? parseInt(e.target.value) : "")
