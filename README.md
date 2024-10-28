@@ -12,5 +12,5 @@ I dedicated significant time to understanding the data structures returned from 
 
 Areas for Improvement
 
-One area I'd like to improve is the filtering process. While I made progress in understanding the subtractive filtering process, it’s not yet fully aligned with my vision. Given more time, I would work to enhance the cohesiveness between user input and visual response, a critical factor in UI and UX development. This would create a more seamless and responsive user experience.
+One area I'd like to improve is the filtering process. While I made progress in understanding the subtractive filtering process, it’s not yet fully aligned with my vision. Given more time, I would work to enhance the cohesiveness between user input and visual response, a critical factor in UI and UX development. This would create a more seamless and responsive user experience. I would also work to improve any bugs that have arisen during testing that I would prevent by incorporating fall backs and handlers to prevent these issues.
 
