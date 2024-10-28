@@ -1,28 +1,22 @@
-// FilterDropdown.tsx
 import React, { useState } from "react";
 import "./FilterDropdown.scss";
 
-// Assuming this is in FilterDropdown.tsx or a shared types file
-
-// FilterOption should represent individual filter options
 export interface FilterOption {
-  label: string; // Display label for the filter
-  value: string | number | { gte?: number; lte?: number }; // Actual filter value, including range support
-  count: number; // Product count for this option
+  label: string;
+  value: string | number | { gte?: number; lte?: number };
+  count: number;
 }
 
-// Props for FilterDropdown component
 export interface FilterDropdownProps {
   label: string;
   options: FilterOption[];
-  onSelect: (selectedOption: FilterOption) => void; // Update onSelect to receive a FilterOption
+  onSelect: (selectedOption: FilterOption) => void;
 }
 
 const FilterDropdown: React.FC<FilterDropdownProps> = ({
   label,
   options,
   onSelect,
-  //   showMoreEnabled = true,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showMore, setShowMore] = useState(false);

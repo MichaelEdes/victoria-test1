@@ -12,16 +12,26 @@ interface SelectedFilters {
 const ProductListings: React.FC = () => {
   const [sort, setSort] = useState(1);
   const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({});
+  const [pageNumber, setPageNumber] = useState(0);
+  const [pageSize] = useState(30);
   const { products, loading, error, totalResults, filters } = useFetchProducts(
     "toilets",
-    0,
-    100,
+    pageNumber,
+    pageSize,
     sort,
     selectedFilters
   );
 
+  const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
+
+  React.useEffect(() => {
+    setDisplayedProducts((prevProducts) => [...prevProducts, ...products]);
+  }, [products]);
+
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSort(Number(event.target.value));
+    setPageNumber(0);
+    setDisplayedProducts([]);
   };
 
   const handleFilterSelect = (filterId: string, optionValue: FilterValue) => {
@@ -29,10 +39,14 @@ const ProductListings: React.FC = () => {
       ...prevFilters,
       [filterId]: optionValue,
     }));
+    setPageNumber(0);
+    setDisplayedProducts([]);
   };
 
   const handleClearFilters = () => {
     setSelectedFilters({});
+    setPageNumber(0);
+    setDisplayedProducts([]);
   };
 
   const handleRemoveFilter = (filterId: string) => {
@@ -41,6 +55,8 @@ const ProductListings: React.FC = () => {
       delete newFilters[filterId];
       return newFilters;
     });
+    setPageNumber(0);
+    setDisplayedProducts([]);
   };
 
   const getFilterLabel = (filterId: string) => {
@@ -55,9 +71,13 @@ const ProductListings: React.FC = () => {
     return String(value);
   };
 
+  const handleViewMore = () => {
+    setPageNumber((prevPage) => prevPage + 1);
+  };
+
   return (
     <div className="product-page-container">
-      <h2>Product Listings</h2>
+      <h2></h2>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
       <div className="product-list-container">
@@ -72,7 +92,6 @@ const ProductListings: React.FC = () => {
                     <i
                       className="fa-solid fa-circle-xmark"
                       onClick={() => handleRemoveFilter(key)}
-                      style={{ cursor: "pointer", marginRight: "5px" }}
                     ></i>
                     <strong>{getFilterLabel(key)}</strong>{" "}
                     {formatFilterValue(value)}
@@ -118,11 +137,20 @@ const ProductListings: React.FC = () => {
             <p>{totalResults} results</p>
           </div>
           <div className="product-list">
-            {products.length > 0
-              ? products.map((product: Product, index: number) => (
+            {displayedProducts.length > 0
+              ? displayedProducts.map((product: Product, index: number) => (
                   <ProductCard key={index} product={product} />
                 ))
               : !loading && <p>No products found.</p>}
+          </div>
+          <div className="pagination">
+            <p>
+              You've viewed {displayedProducts.length} out of {totalResults}{" "}
+              results
+            </p>
+            {displayedProducts.length < totalResults && (
+              <button onClick={handleViewMore}>Load More</button>
+            )}
           </div>
         </div>
       </div>

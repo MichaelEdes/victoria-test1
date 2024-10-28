@@ -50,7 +50,6 @@ const useFetchProducts = (
       setLoading(true);
       setError(null);
 
-      // Format selectedFilters into facets for the API request
       const facets = Object.keys(selectedFilters).reduce((acc, key) => {
         acc[key] = [{ identifier: key, value: selectedFilters[key] }];
         return acc;
@@ -81,9 +80,7 @@ const useFetchProducts = (
         setProducts(data.products || []);
         setTotalResults(data.pagination.total || 0);
 
-        if (filters.length === 0) {
-          setFilters(data.facets || []);
-        }
+        setFilters(data.facets || []);
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -96,7 +93,7 @@ const useFetchProducts = (
     };
 
     fetchProducts();
-  }, [query, pageNumber, size, sort, selectedFilters]); // Ensure selectedFilters triggers the fetch
+  }, [query, pageNumber, size, sort, selectedFilters]);
 
   return { products, loading, error, totalResults, filters };
 };
