@@ -1,0 +1,37 @@
+.filter-dropdown {
+  background-color: white;
+  overflow: hidden;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+
+  .filter-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    cursor: pointer;
+    border: solid 1px rgb(220, 220, 220);
+    border-radius: 0.25rem;
+    overflow: hidden;
+  }
+
+  .options {
+    border-radius: 0 0 0.25rem 0.25rem;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 28px 0px,
+      rgba(0, 0, 0, 0.1) 0px 2px 4px 0px,
+      rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
+    .option {
+      padding: 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+  }
+
+  .show-more {
+    width: 100%;
+    padding: 10px;
+    border: 0;
+    border-radius: 0 0 0.25rem 0.25rem;
+  }
+}

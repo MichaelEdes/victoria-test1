@@ -1,7 +1,7 @@
 // ProductListings.tsx
 import React, { useState } from "react";
 import ProductCard from "@components/ProductCard/ProductCard";
-import { Product, FilterOption, FilterValue } from "@utils/types";
+import { Product, FilterOption, FilterValue } from "@utils/types"; // Import shared types
 import useFetchProducts from "@hooks/useFetchProducts";
 import "./ProductListings.scss";
 import FilterDropdown from "@components/FilterDropdown/FilterDropdown";

@@ -1,4 +1,3 @@
-// hooks/useFetchProducts.ts
 import { useState, useEffect } from "react";
 import { Product } from "@utils/types";
 
@@ -9,7 +8,7 @@ interface FilterOption {
   identifier: string;
   displayValue: string;
   productCount: number;
-  value: string | number | { gte?: number; lte?: number }; // add this
+  value: string | number | { gte?: number; lte?: number };
 }
 
 interface FilterCategory {
@@ -38,7 +37,7 @@ const useFetchProducts = (
   pageNumber: number,
   size: number,
   sort: number,
-  selectedFilters: SelectedFilters // Use the updated SelectedFilters here
+  selectedFilters: SelectedFilters
 ): UseFetchProductsResult => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,9 +77,15 @@ const useFetchProducts = (
         }
 
         const data = await response.json();
+
+        // Set products and pagination details
         setProducts(data.products || []);
         setTotalResults(data.pagination.total || 0);
-        setFilters(data.facets || []);
+
+        // Only set filters once to retain the full list of options
+        if (filters.length === 0) {
+          setFilters(data.facets || []);
+        }
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -93,7 +98,7 @@ const useFetchProducts = (
     };
 
     fetchProducts();
-  }, [query, pageNumber, size, sort, selectedFilters]);
+  }, [query, pageNumber, size, sort, selectedFilters]); // Ensure selectedFilters triggers the fetch
 
   return { products, loading, error, totalResults, filters };
 };

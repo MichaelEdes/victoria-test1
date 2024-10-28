@@ -32,7 +32,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
 
   return (
     <div className="filter-dropdown">
-      <div className="dropdown-header" onClick={toggleDropdown}>
+      <div className="filter-trigger" onClick={toggleDropdown}>
         <span>{label}</span>
         <i
           className={`fa-solid ${isOpen ? "fa-chevron-up" : "fa-chevron-down"}`}
@@ -40,11 +40,11 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       </div>
 
       {isOpen && (
-        <div className="dropdown-options">
+        <div className="options">
           {(showMore ? options : options.slice(0, 5)).map((option, index) => (
             <div
               key={index}
-              className="dropdown-option"
+              className="option"
               onClick={() => {
                 if (onSelect) onSelect(option);
               }}
