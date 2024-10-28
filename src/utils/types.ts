@@ -85,6 +85,7 @@ export interface Product {
 export type FilterValue = string | number | { gte?: number; lte?: number };
 
 export interface FilterOption {
+  [x: string]: any;
   identifier: string;
   displayName: string;
   options: {

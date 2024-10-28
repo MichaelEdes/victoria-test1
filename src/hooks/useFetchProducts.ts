@@ -78,11 +78,9 @@ const useFetchProducts = (
 
         const data = await response.json();
 
-        // Set products and pagination details
         setProducts(data.products || []);
         setTotalResults(data.pagination.total || 0);
 
-        // Only set filters once to retain the full list of options
         if (filters.length === 0) {
           setFilters(data.facets || []);
         }

@@ -1,7 +1,6 @@
-// ProductListings.tsx
 import React, { useState } from "react";
 import ProductCard from "@components/ProductCard/ProductCard";
-import { Product, FilterOption, FilterValue } from "@utils/types"; // Import shared types
+import { Product, FilterOption, FilterValue } from "@utils/types";
 import useFetchProducts from "@hooks/useFetchProducts";
 import "./ProductListings.scss";
 import FilterDropdown from "@components/FilterDropdown/FilterDropdown";
@@ -32,6 +31,30 @@ const ProductListings: React.FC = () => {
     }));
   };
 
+  const handleClearFilters = () => {
+    setSelectedFilters({});
+  };
+
+  const handleRemoveFilter = (filterId: string) => {
+    setSelectedFilters((prevFilters) => {
+      const newFilters = { ...prevFilters };
+      delete newFilters[filterId];
+      return newFilters;
+    });
+  };
+
+  const getFilterLabel = (filterId: string) => {
+    const filter = filters.find((f) => f.identifier === filterId);
+    return filter ? filter.displayName : filterId;
+  };
+
+  const formatFilterValue = (value: FilterValue) => {
+    if (typeof value === "object" && "gte" in value && "lte" in value) {
+      return `${value.gte} - ${value.lte}`;
+    }
+    return String(value);
+  };
+
   return (
     <div className="product-page-container">
       <h2>Product Listings</h2>
@@ -40,6 +63,30 @@ const ProductListings: React.FC = () => {
       <div className="product-list-container">
         <div className="filter-container">
           <p>Filter By</p>
+          {Object.keys(selectedFilters).length > 0 && (
+            <div className="active-filters">
+              <h4>Selected Filters:</h4>
+              <ul>
+                {Object.entries(selectedFilters).map(([key, value]) => (
+                  <li key={key}>
+                    <i
+                      className="fa-solid fa-circle-xmark"
+                      onClick={() => handleRemoveFilter(key)}
+                      style={{ cursor: "pointer", marginRight: "5px" }}
+                    ></i>
+                    <strong>{getFilterLabel(key)}</strong>{" "}
+                    {formatFilterValue(value)}
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={handleClearFilters}
+                className="clear-filters-button"
+              >
+                Clear All
+              </button>
+            </div>
+          )}
           <div className="filters">
             {filters.map((filter: FilterOption) => (
               <FilterDropdown
