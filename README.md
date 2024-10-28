@@ -1,5 +1,16 @@
-Here is my submission for the technical test
+To Get Started on the Project
 
-I did as much as I could in the time given and tried to go as far above and beyond in the time I had allocated. It is unfinished and there is a lot that I would still like to do but I am confident that this a good representation of my abilities and work ethic.
+1. In the terminal, enter 'npm i' or 'npm install' to install dependencies.
 
-I appreciate any time taken to look through this and appreciate any feedback available.
+2. Once completed, enter npm run start to start the development server.
+
+3. The server should start on localhost:3000. You can view the site by visiting http://localhost:3000.
+
+What Went Well
+
+I dedicated significant time to understanding the data structures returned from the server and identifying which data parts correspond to specific UI elements and key variables essential for filtering. I believe I was particularly thorough in mapping and displaying product data, ensuring that key UI elements reflected the server's flags accurately. This attention to detail helped establish a solid foundation for the remaining tasks.
+
+Areas for Improvement
+
+One area I'd like to improve is the filtering process. While I made progress in understanding the subtractive filtering process, it’s not yet fully aligned with my vision. Given more time, I would work to enhance the cohesiveness between user input and visual response, a critical factor in UI and UX development. This would create a more seamless and responsive user experience.
+
